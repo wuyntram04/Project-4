@@ -82,9 +82,11 @@ void complexNumberMenu()
 			return;
 		default:
 			cout << "\n\tInvalid input";
+			break;
 
 		}
 
 	} while (true);
 
 }
+
