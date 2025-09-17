@@ -55,4 +55,12 @@ void complexNumberMenu()
 	cout << "\n\tnumbers, and i represents the \"imaginary unit\", satisfying the equation i^2 = -1. Because no";
 	cout << "\n\treal number satisfies this equation, i is called an imaginary number. For the complex number";
 	cout << "\n\ta + b i, a is called the real part and b is called the imaginary part.";
+	cout << "\n\n\t1> Complex Numbers";
+	cout << "\n\t" << string(80, char(205));
+	cout << "\n\t\tA> A Complex Number";
+	cout << "\n\t\tB> Multiple Complex Numbers";
+	cout << "\n\t" << string(80, char(196));
+	cout << "\n\t\t0> return";
+	cout << "\n\t" << string(80, char(205));
+
 }
