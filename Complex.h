@@ -50,6 +50,7 @@ public:
 			case 0: return;
 			default:
 				cout << "\n\tInvalid input";
+				break;
 
 			}
 
@@ -91,6 +92,7 @@ public:
 			case 0: return;
 			default:
 				cout << "\n\tInvalid input";
+				break;
 
 			}
 
@@ -100,4 +102,5 @@ public:
 		} while (true);
 	}
 };
+
 
