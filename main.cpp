@@ -1,10 +1,12 @@
 #include<iostream>
 #include"input.h"
+#include"Complex.h"
 using namespace std;
 
 
 
 void mainMenu();
+void complexNumberMenu();
 
 int main()
 {
@@ -14,7 +16,7 @@ int main()
 		mainMenu();
 		switch (toupper(inputInteger("\n\t\tOption: ", 0,3)))
 		{
-		case 1:
+		case 1:complexNumberMenu();
 			break;
 		case 2:
 			break;
@@ -51,16 +53,38 @@ void mainMenu()
 
 void complexNumberMenu()
 {
-	cout << "\n\tA complex number is a number that can be expressed in the form a + b i, where a and b are real";
-	cout << "\n\tnumbers, and i represents the \"imaginary unit\", satisfying the equation i^2 = -1. Because no";
-	cout << "\n\treal number satisfies this equation, i is called an imaginary number. For the complex number";
-	cout << "\n\ta + b i, a is called the real part and b is called the imaginary part.";
-	cout << "\n\n\t1> Complex Numbers";
-	cout << "\n\t" << string(80, char(205));
-	cout << "\n\t\tA> A Complex Number";
-	cout << "\n\t\tB> Multiple Complex Numbers";
-	cout << "\n\t" << string(80, char(196));
-	cout << "\n\t\t0> return";
-	cout << "\n\t" << string(80, char(205));
+	Complex c;
+
+	do
+	{
+		system("cls");
+
+		cout << "\n\tA complex number is a number that can be expressed in the form a + b i, where a and b are real";
+		cout << "\n\tnumbers, and i represents the \"imaginary unit\", satisfying the equation i^2 = -1. Because no";
+		cout << "\n\treal number satisfies this equation, i is called an imaginary number. For the complex number";
+		cout << "\n\ta + b i, a is called the real part and b is called the imaginary part.";
+		cout << "\n\n\t1> Complex Numbers";
+		cout << "\n\t" << string(80, char(205));
+		cout << "\n\t\tA> A Complex Number";
+		cout << "\n\t\tB> Multiple Complex Numbers";
+		cout << "\n\t" << string(80, char(196));
+		cout << "\n\t\t0> return";
+		cout << "\n\t" << string(80, char(205));
+
+
+		switch (toupper(inputChar("\n\tOption: ")))
+		{
+		case 'A': c.menuA();
+			break;
+		case 'B': c.menuB();
+			break;
+		case '0':
+			return;
+		default:
+			cout << "\n\tInvalid input";
+
+		}
+
+	} while (true);
 
 }
