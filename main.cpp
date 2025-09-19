@@ -147,7 +147,11 @@ void complexMenuA() {
 	} while (true);
 }
 
-void complexMenuB() {
+void complexMenuB()
+{
+	Complex c1;
+	Complex c2;
+
 	do
 	{
 		system("cls");
@@ -166,14 +170,22 @@ void complexMenuB() {
 		switch (toupper(inputInteger("\n\t\tOption: ", 0, 8)))
 		{
 		case 1:
+		{
+			c1.setComplex();
+			c1.showFomular("C1");
 			break;
+		}
 		case 2:
+		{
+			c2.setComplex();
+			c2.showFomular("C2");
 			break;
-		case 3:
+		}	
+		case 3: Complex::verifyComparisons(c1, c2);
 			break;
-		case 4:
+		case 4: Complex::evaluateArithmetic(c1, c2);
 			break;
-		case 5:
+		case 5: Complex::evaluateExpression(c1, c2);
 			break;
 		case 0: return;
 		default:
@@ -186,4 +198,4 @@ void complexMenuB() {
 		system("pause");
 
 	} while (true);
-}
+
