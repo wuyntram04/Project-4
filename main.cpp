@@ -92,7 +92,7 @@ void complexNumberMenu()
 }
 
 void complexMenuA() {
-	Complex c;
+	Complex c1;
 
 	do
 	{
@@ -115,24 +115,68 @@ void complexMenuA() {
 		switch (toupper(inputInteger("\n\t\tOption: ", 0, 8)))
 		{
 		case 1:
-			c.setRealNum(inputDouble("\n\tEnter a number (double value) for the real part: "));
+			c1.setRealNum(inputDouble("\n\tEnter a number (double value) for the real part: "));
 			break;
 		case 2:
-			c.setiNum(inputDouble("\n\tEnter a number (double value) for the imaginary part: "));
+			c1.setiNum(inputDouble("\n\tEnter a number (double value) for the imaginary part: "));
 			break;
 		case 3:
-			c.showFomular();
+			cout << "\n\tComplex Number C1 = " << c1;
 			break;
 		case 4:
+		{
+			Complex c2 = -c1;
+			cout << "\n\t\tNegated the complex number C2 (a copy of C1)\n";
+			cout << "\t\t-(" << c1 << ") = " << c2;
 			break;
+		}
 		case 5:
+		{
+			float value = inputDouble("\n\tEnter a value (double): ");
+			cout << "\n\t\tC1 + value ";
+			Complex add = c1 + value;
+			cout << "\n\t\t(" << c1 << ") + " << value << " = " << add;
+
+			cout << "\n\n\t\tValue + C1";
+			cout << "\n\t\t" << value << " + (" << c1 << ") = " << add;
 			break;
+		}	
 		case 6:
+		{
+			float value = inputDouble("\n\tEnter a value (double): ");
+			cout << "\n\t\tC1 - value ";
+			Complex sub1 = c1 - value;
+			cout << "\n\t\t(" << c1 << ") - " << value << " = " << sub1;
+
+			cout << "\n\n\t\tValue - C1";
+			Complex sub2 = value - c1;
+			cout << "\n\t\t" << value << " - (" << c1 << ") = " << sub2;
 			break;
+		}
 		case 7:
+		{
+			float value = inputDouble("\n\tEnter a value (double): ");
+			cout << "\n\t\tC1 * value ";
+			Complex mul1 = c1 * value;
+			cout << "\n\t\t(" << c1 << ") * " << value << " = "<< mul1;
+
+			cout << "\n\n\t\tValue * C1";
+			Complex mul2 = value * c1;
+			cout << "\n\t\t" << value << " * (" << c1 << ") = " << mul2;
 			break;
+		}
 		case 8:
+		{
+			float value = inputDouble("\n\tEnter a value (double): ");
+			cout << "\n\t\tC1 / value ";
+			Complex div1 = c1 / value;
+			cout << "\n\t\t(" << c1 << ") / " << value << " = " << div1;
+
+			cout << "\n\n\t\tValue / C1";
+			Complex div2 = value / c1;
+			cout << "\n\t\t" << value << " / (" << c1 << ") = " << div2;
 			break;
+		}
 		case 0:
 			return;
 		default:
@@ -140,7 +184,6 @@ void complexMenuA() {
 			break;
 
 		}
-
 		cout << "\n\n\t";
 		system("pause");
 
@@ -198,4 +241,5 @@ void complexMenuB()
 		system("pause");
 
 	} while (true);
+
 
