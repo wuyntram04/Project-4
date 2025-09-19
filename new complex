@@ -1,0 +1,159 @@
+#pragma once
+#include<iostream>
+#include "input.h"
+#include<cmath>
+using namespace std;
+
+class Complex
+{
+private:
+	float* realNum;
+	float* iNum;
+public:
+
+	//Constructor
+	Complex() {
+		realNum = new float(0.0);
+		iNum = new float(0.0);
+	}
+
+	Complex(float r, float i)
+	{
+		realNum = new float(r);
+		iNum = new float(i);
+	}
+
+	//Destructor
+	~Complex() {
+		delete realNum;
+		delete iNum;
+	}
+
+	//Copy Constructor
+	Complex(const Complex& other)
+	{
+		realNum = new float(*other.realNum);
+		iNum = new float(*other.iNum);
+	}
+
+	void setRealNum(float real)
+	{
+		*realNum = real;
+	}
+
+	float getRealNum() const
+	{
+		return *realNum;
+	}
+
+	void setiNum(float i)
+	{
+		*iNum = i;
+	}
+
+	float getiNum() const
+	{
+		return *iNum;
+	}
+
+	Complex negate() const {
+		return Complex(-(*realNum), -(*iNum));
+	}
+	
+	Complex operator -() const
+	{
+		return negate();
+	}
+
+	Complex operator +(float k)
+	{
+		return Complex(k + *realNum, *iNum);
+	}
+
+	Complex operator -(float k)
+	{
+		return Complex(*realNum - k, *iNum);
+	}
+
+	Complex operator *(float k)
+	{
+		return Complex( *realNum * k, *iNum * k);
+	}
+
+	Complex operator /(float k)
+	{
+		if (fabs(k) < 1e-6f) {
+			return Complex(NAN, NAN);
+		}
+		return Complex(*realNum / k, *iNum / k);
+	}
+
+	static bool isAlmostZero(float x) {
+		return fabs(x) < 1e-6f;
+	}
+
+	friend ostream& operator<<(ostream& os, const Complex& c) {
+		float r = c.getRealNum();
+		float i = c.getiNum();
+
+		if (isnan(r) || isnan(i)) {
+			os << "undefined";
+			return os;
+		}
+
+
+		if (isAlmostZero(r) && isAlmostZero(i))
+			os << "0";
+		else if (isAlmostZero(i))
+			os << r;
+		else if (isAlmostZero(r))
+			os << i << "i";
+		else
+		{
+			os << r;
+			if (i > 0)
+			{
+				os << " + " << i << "i";
+			}
+			else
+			{
+				os << " - " << fabs(i) << "i";
+			}
+		}
+			
+
+		return os;
+	}
+
+
+};
+
+
+
+Complex operator-(float k, const Complex& z) {
+	return Complex(k - z.getRealNum(), -z.getiNum());
+}
+
+Complex operator *(float k, const Complex& c)
+{
+	return Complex(k * c.getRealNum(), k * c.getiNum());
+}
+
+Complex operator /(float k, const Complex& c)
+{
+	float r = c.getRealNum();
+	float i = c.getiNum();
+
+	if (fabs(r) < 1e-6f && fabs(i) < 1e-6f) 
+	{
+		return Complex(NAN, NAN); 
+	}
+
+	float denom = r * r + i * i;
+	float realPart = (k * r) / denom;
+	float imagPart = (-k * i) / denom;
+
+	return Complex(realPart, imagPart);
+}
+
+
