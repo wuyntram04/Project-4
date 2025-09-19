@@ -1,0 +1,406 @@
+#pragma once
+#include <iostream>
+#include <stdexcept>
+#include <fstream>
+
+using namespace std;
+class Rational
+{
+private:
+	int * numerator;
+	int * denominator;
+	bool undefined = false;
+
+	//preCondition: numerator and denominator must be integer value
+	//postCondition: return the greatest common division value between 2 values
+	static int gcd(int numerator, int denominator)
+	{
+		if (numerator < 0 && denominator < 0)
+		{
+			numerator = -numerator;
+
+		}
+
+		if (denominator < 0)
+		{
+			denominator = -denominator;
+		}
+
+		if (numerator == 0 && denominator == 0)
+		{
+			return 1;
+		}
+
+
+		if (denominator == 0)
+		{
+			return numerator;
+		}
+
+
+		while (denominator != 0)
+		{
+			int t = numerator % denominator;
+			numerator = denominator;
+			denominator = t;
+		}
+
+		if (numerator == 0)
+		{
+			return 1;
+		}
+		else
+		{
+			return numerator;
+		}
+	}
+
+
+	//preCondition: none
+	//postCondition: simplify the value 
+	void simplify()
+	{
+		if (*denominator == 0)
+		{
+			undefined = true;
+			return;
+		}
+
+		if (numerator == 0)
+		{
+			return;
+		}
+		int d = gcd(*numerator, *denominator);
+		if (d == 0)
+		{
+			d = 1;
+		}
+
+
+		*numerator /= d;
+		*denominator /= d;
+
+		if (*denominator < 0 && *numerator < 0)
+		{
+			*numerator = -(*numerator);
+			*denominator = -(*denominator);
+		}
+
+	}
+
+
+
+	static void scaleComDeno(const Rational& R1, const Rational& R2, int& s1, int& s2)
+	{
+
+		int R1num = *R1.numerator;
+		int  R1den = *R1.denominator;
+		int R2num = *R2.numerator;
+		int R2den = *R2.denominator;
+
+		// absolute value of the denominators 1 
+		int absDeno1 = R1den;
+		if (absDeno1 < 0)
+		{
+			absDeno1 = -absDeno1;
+		}
+
+		// absolute value of the denominators 2
+		int absDeno2 = R2den;
+		if (absDeno2 < 0)
+		{
+			absDeno2 = -absDeno2;
+		}
+
+
+		// scaling factor for the common denominator
+		int f1 = absDeno2;
+		int f2 = absDeno1;
+
+		// push the denominator’s sign into the numerator
+		if (R1den < 0) R1num = -R1num;
+		if (R2den < 0) R2num = -R2num;
+
+		//numerator after common denominator scaling
+		s1 = R1num * f1;
+		s2 = R2num * f2;
+	}
+public:
+
+	//Default Constructor
+	//preCondition: none
+	//postCondition: set numerator to 0 and denominator to 1
+	Rational()
+	{
+		numerator = new int(0);
+		denominator = new int(1);
+		undefined = false;
+	}
+
+
+	//Constructor
+	//preCondition: n and d are integer
+	//postCondition: set numerator as n and denominator as d and check if denominator is 0
+	Rational(int n, int d)
+	{
+		numerator = new int (n);
+		denominator = new int(d);
+		if (d == 0)
+		{
+			undefined = true;
+			return;
+		}
+		undefined = false;
+		simplify();
+
+	}
+	// Copy ctor
+	Rational(const Rational& other)
+	{
+		numerator = new int(other.getNumerator());
+		denominator = new int(other.getDenominator());
+		undefined = other.undefined;
+	}
+
+	// Move ctor
+	Rational(Rational&& other) noexcept
+	{
+		numerator = other.numerator;
+		denominator = other.denominator;
+		undefined = other.undefined;
+
+		// leave other in valid default state
+		other.numerator = new int(0);
+		other.denominator = new int(1);
+		other.undefined = false;
+	}
+
+
+
+	~Rational()
+	{
+		delete numerator;
+		delete denominator;
+		numerator = nullptr;
+		denominator = nullptr;
+	}
+
+	void normalize()
+	{
+		simplify();
+	}
+	//preCondition: n is integer
+	//postCondition: set numerator as n and simlify
+	void setNumerator(int n)
+	{
+		*numerator = n;
+		//simplify();
+	}
+
+	bool isUndefined() const
+	{
+		return undefined;
+	}
+	//preCondition: none
+	//postCondition: return the value of numerator
+	int getNumerator() const
+	{
+		return *numerator;
+	}
+
+	//preCondition: n is integer
+	//postCondition: check if the denominator is 0, set numerator as d and simlify
+	void setDenominator(int d)
+	{
+		*denominator = d;
+		if (d == 0)
+		{
+			undefined = true;
+			return;
+		}
+		undefined = false;
+		//simplify();
+	}
+
+	//preCondition: none
+	//postCondition: return the value of denominator
+	int getDenominator() const
+	{
+		return *denominator;
+	}
+
+
+	void operator = (const Rational& obj)
+	{
+		numerator = obj.numerator;
+		denominator = obj.denominator;
+		undefined = obj.undefined;
+	}
+
+
+
+	friend ostream& operator << (ostream& os, const Rational& r)
+	{
+		if (r.isUndefined()) {
+			os << "undefined";
+		}
+		else {
+			os << r.getNumerator() << "/" << r.getDenominator();
+		}
+		return os;
+	}
+
+	//preCondition: both objects must be valid to be compared.
+	//postCondition: returns true if the objects are equal, otherwise false.
+	friend bool operator==(const Rational& R1, const Rational& R2)
+	{
+		int s1, s2;
+		scaleComDeno(R1, R2, s1, s2);
+
+		if (s1 == s2)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+		
+	}
+
+	//preCondition: both objects must be valid to be compared.
+	//postCondition: returns true if the first object is less than the second object, otherwise false.
+	friend bool operator<(const Rational& R1, const Rational& R2)
+	{
+		int s1, s2;
+		scaleComDeno(R1, R2, s1, s2);
+
+		if (s1 < s2)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	friend bool operator!=(const Rational& R1, const Rational& R2)
+	{
+		int s1, s2;
+		scaleComDeno(R1, R2, s1, s2);
+
+		if (s1 == s2) return false;
+		else        return true;
+	}
+
+	friend bool operator>(const Rational& R1, const Rational& R2)
+	{
+		int s1, s2;
+		scaleComDeno(R1, R2, s1, s2);
+
+		if (s1 > s2) return true;
+		else       return false;
+	}
+
+	friend bool operator<=(const Rational& R1, const Rational& R2)
+	{
+		int s1, s2;
+		scaleComDeno(R1, R2, s1, s2);
+
+		if (s1 > s2) return false; // a > b
+		else       return true;  // a <= b
+	}
+
+	friend bool operator>=(const Rational& R1, const Rational&R2)
+	{
+		int s1, s2;
+		scaleComDeno(R1, R2, s1, s2);
+
+		if (s1 < s2) return false; // a < b
+		else       return true;  // a >= b
+	}
+
+
+};
+
+//preCondition: both objects must be valid for multiplication.	
+//postCondition: returns the result of the multiplication of the two objects.
+Rational operator * (const Rational& R1, const Rational& R2)
+{
+	Rational temp;
+	if (R1.getDenominator() == 0 || R2.getDenominator() == 0)
+	{
+		temp.setNumerator(0);
+		temp.setDenominator(0);   // undefined
+	}
+	else
+	{
+		temp.setNumerator(R1.getNumerator() * R2.getNumerator());
+		temp.setDenominator(R1.getDenominator() * R2.getDenominator());
+	}
+	return temp;
+}
+
+//preCondition: both objects must be valid for division and the second object's numerator must not be zero.	
+//postCondition: returns the result of the division of the two objects.
+Rational operator / (const Rational& R1, const Rational& R2)
+{
+	Rational temp;
+	if (R1.getDenominator() == 0 || R2.getDenominator() == 0)
+	{
+		temp.setNumerator(0);
+		temp.setDenominator(0); // undefined
+	}
+	else
+	{
+		temp.setNumerator(R1.getNumerator() * R2.getDenominator());
+		temp.setDenominator(R1.getDenominator() * R2.getNumerator());
+	}
+	return temp;
+}
+
+//preCondition: both objects must be valid for summation.	
+//postCondition: returns the result of the summation of the two objects.
+Rational operator + (const Rational& R1, const Rational& R2)
+{
+	Rational temp;
+	// If there is a 0 pattern -> the result is undefined
+	if (R1.getDenominator() == 0 || R2.getDenominator() == 0)
+	{
+		temp.setNumerator(0);
+		temp.setDenominator(0);
+	}
+	else
+	{
+		int a = R1.getNumerator();
+		int b = R1.getDenominator();
+		int c = R2.getNumerator();
+		int d = R2.getDenominator();
+		temp.setNumerator(a * d + c * b);
+		temp.setDenominator(b * d);
+	}
+	return temp;
+}
+
+//preCondition: both objects must be valid for subtraction.	
+//postCondition: returns the result of the subtraction of the two objects.
+Rational operator - (const Rational& R1, const Rational& R2)
+{
+	Rational temp;
+	if (R1.getDenominator() == 0 || R2.getDenominator() == 0)
+	{
+		temp.setNumerator(0);
+		temp.setDenominator(0);
+	}
+	else
+	{
+		int a = R1.getNumerator();
+		int b = R1.getDenominator();
+		int c = R2.getNumerator();
+		int d = R2.getDenominator();
+		temp.setNumerator(a * d - c * b);
+		temp.setDenominator(b * d);
+	}
+	return temp;
+}
