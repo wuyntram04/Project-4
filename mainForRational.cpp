@@ -100,7 +100,7 @@ void RationalFunction()
 			break;
 		case 'B': RationalFunctionB();
 			break;
-		case 'X': exit(0);
+		case '0': return;
 		default:
 			cout << "\n\tERROR: Invalid Input.";
 			break;
