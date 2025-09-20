@@ -132,6 +132,7 @@ void RationalMenuA()
 	cout << "\n\t" << string(80, char(205));
 }
 
+
 void RationalFunctionA()
 {
 	Rational R1;
@@ -145,18 +146,18 @@ void RationalFunctionA()
 		try
 		{
 			RationalMenuA();
-			switch (toupper(inputChar("\n\tOption: ")))
+			switch (inputInteger("\n\tOption: "))
 			{
-			case '1':
+			case 1:
 			{
 				int n = inputInteger("\n\tEnter the value for the numerator: ");
-				
+
 				R1.setNumerator(n);
 
 			}
 
 			break;
-			case '2':
+			case 2:
 			{
 				int d = inputInteger("\n\tEnter the value for the denominator: ");
 
@@ -164,20 +165,20 @@ void RationalFunctionA()
 
 			}
 			break;
-			
-			case '3':
+
+			case 3:
 			{
 				cout << "\n\tRational number R1: " << R1.getNumerator() << "/" << R1.getDenominator();
 			}
 			break;
-			case'4':
+			case 4:
 			{
 				cout << "\n\tNormalized rational number R2 (a copy of R1)";
 				R1.normalize();
 				cout << "\n\t" << R1;
 			}
 			break;
-			case '0':
+			case 0:
 				return;
 
 			default: cout << "\n\tERROR: Invalid Input";
@@ -194,6 +195,7 @@ void RationalFunctionA()
 	} while (true);
 
 }
+
 
 
 void RationalMenuB()
