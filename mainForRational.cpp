@@ -234,7 +234,7 @@ void RationalFunctionB()
 				R1.setNumerator(n);
 				R1.setDenominator(d);
 
-				
+				R1.normalize();
 				cout << "\n\tR1 = " << R1;
 				
 
@@ -248,7 +248,7 @@ void RationalFunctionB()
 
 				R2.setNumerator(n);
 				R2.setDenominator(d);
-
+				R2.normalize();
 				
 				cout << "\n\tR2 = " << R2;
 				
@@ -259,7 +259,8 @@ void RationalFunctionB()
 			{
 				cout << boolalpha;
 				bool anyUndef = R1.isUndefined() || R2.isUndefined();
-
+				R1.normalize();
+				R2.normalize();
 				cout << "\n\n\tR1 == R2 -> (" << R1 << ") == (" << R2 << ") ? " << (R1 == R2);
 				cout << "\n\tR1 != R2 -> (" << R1 << ") != (" << R2 << ") ? " << (R1 != R2);
 				cout << "\n\tR1 >= R2 -> (" << R1 << ")  >= (" << R2 << ") ? " << (R1 >= R2);
@@ -270,6 +271,8 @@ void RationalFunctionB()
 			break;
 			case '4':
 			{
+				R1.normalize();
+				R2.normalize();
 				cout << "\n\tAddition    : R1 + R2 -> (" << R1 << ") + (" << R2 << ") = " << (R1 + R2);
 				cout << "\n\tSubtraction : R1 - R2 -> (" << R1 << ") - (" << R2 << ") = " << (R1 - R2);
 				cout << "\n\tMutiplication: R1 * R2 -> (" << R1 << ") * (" << R2 << ") = " << (R1 * R2);
