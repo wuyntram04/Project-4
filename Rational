@@ -7,8 +7,8 @@ using namespace std;
 class Rational
 {
 private:
-	int * numerator;
-	int * denominator;
+	int* numerator;
+	int* denominator;
 	bool undefined = false;
 
 	//preCondition: numerator and denominator must be integer value
@@ -66,7 +66,7 @@ private:
 			return;
 		}
 
-		if (numerator == 0)
+		if (*numerator == 0)
 		{
 			return;
 		}
@@ -90,7 +90,7 @@ private:
 
 
 
-	static void scaleComDeno(const Rational& R1, const Rational& R2, int& s1, int& s2)
+	static void objectCommonDenominator(const Rational& R1, const Rational& R2, int& s1, int& s2)
 	{
 
 		int R1num = *R1.numerator;
@@ -138,23 +138,14 @@ public:
 	}
 
 
-	//Constructor
-	//preCondition: n and d are integer
-	//postCondition: set numerator as n and denominator as d and check if denominator is 0
-	Rational(int n, int d)
-	{
-		numerator = new int (n);
-		denominator = new int(d);
-		if (d == 0)
-		{
-			undefined = true;
-			return;
-		}
-		undefined = false;
-		simplify();
 
-	}
-	// Copy ctor
+	// Copy constructor
+    // Precondition: other must be a valid Rational object
+    // Postcondition: 
+    //   - Allocates new memory for numerator and denominator
+    //   - Copies values from other into this object
+    //   - Copies the undefined flag
+    //   - Ensures deep copy (this object has its own separate memory)
 	Rational(const Rational& other)
 	{
 		numerator = new int(other.getNumerator());
@@ -162,21 +153,9 @@ public:
 		undefined = other.undefined;
 	}
 
-	// Move ctor
-	Rational(Rational&& other) noexcept
-	{
-		numerator = other.numerator;
-		denominator = other.denominator;
-		undefined = other.undefined;
-
-		// leave other in valid default state
-		other.numerator = new int(0);
-		other.denominator = new int(1);
-		other.undefined = false;
-	}
-
-
-
+	// Destructor
+	// Precondition: numerator and denominator must point to dynamically allocated integers
+	// Postcondition: memory for numerator and denominator is released; pointers set to nullptr
 	~Rational()
 	{
 		delete numerator;
@@ -185,10 +164,14 @@ public:
 		denominator = nullptr;
 	}
 
+	// Normalize rational number
+	// Precondition: numerator and denominator are valid
+	// Postcondition: rational number is simplified (if simplify() is implemented)
 	void normalize()
 	{
 		simplify();
 	}
+
 	//preCondition: n is integer
 	//postCondition: set numerator as n and simlify
 	void setNumerator(int n)
@@ -197,10 +180,14 @@ public:
 		//simplify();
 	}
 
+	// Check if undefined
+   // Precondition: none
+   // Postcondition: returns true if denominator == 0, otherwise false
 	bool isUndefined() const
 	{
 		return undefined;
 	}
+
 	//preCondition: none
 	//postCondition: return the value of numerator
 	int getNumerator() const
@@ -213,12 +200,16 @@ public:
 	void setDenominator(int d)
 	{
 		*denominator = d;
+
 		if (d == 0)
 		{
 			undefined = true;
-			return;
 		}
-		undefined = false;
+		else
+		{
+			undefined = false;
+
+		}
 		//simplify();
 	}
 
@@ -229,24 +220,33 @@ public:
 		return *denominator;
 	}
 
-
-	void operator = (const Rational& obj)
+	// Assignment operator
+	// Precondition: obj must be a valid Rational object
+	// Postcondition: copies numerator, denominator, and undefined flag from obj;
+	//                protects against self-assignment; allows chaining (a=b=c)
+	Rational& operator=(const Rational& obj)
 	{
-		numerator = obj.numerator;
-		denominator = obj.denominator;
-		undefined = obj.undefined;
+		if (this != &obj) // protect against self-assignment
+		{
+			*numerator = *obj.numerator;   // copy the value
+			*denominator = *obj.denominator; // copy the value
+			undefined = obj.undefined;    // copy the flag
+		}
+		return *this; // return *this to allow chaining: a = b = c;
 	}
 
 
-
+	// Output operator
+   // Precondition: r is a valid Rational object
+   // Postcondition: prints "undefined" if denominator == 0; otherwise prints "num/den"
 	friend ostream& operator << (ostream& os, const Rational& r)
 	{
-		if (r.isUndefined()) {
+		/*if (r.isUndefined()) {
 			os << "undefined";
 		}
-		else {
-			os << r.getNumerator() << "/" << r.getDenominator();
-		}
+		else {*/
+		os << r.getNumerator() << "/" << r.getDenominator();
+		/*}*/
 		return os;
 	}
 
@@ -255,7 +255,7 @@ public:
 	friend bool operator==(const Rational& R1, const Rational& R2)
 	{
 		int s1, s2;
-		scaleComDeno(R1, R2, s1, s2);
+		objectCommonDenominator(R1, R2, s1, s2);
 
 		if (s1 == s2)
 		{
@@ -265,7 +265,7 @@ public:
 		{
 			return false;
 		}
-		
+
 	}
 
 	//preCondition: both objects must be valid to be compared.
@@ -273,7 +273,7 @@ public:
 	friend bool operator<(const Rational& R1, const Rational& R2)
 	{
 		int s1, s2;
-		scaleComDeno(R1, R2, s1, s2);
+		objectCommonDenominator(R1, R2, s1, s2);
 
 		if (s1 < s2)
 		{
@@ -285,42 +285,53 @@ public:
 		}
 	}
 
+	// Inequality operator
+   // Precondition: R1 and R2 are valid Rational objects
+   // Postcondition: returns true if R1 != R2, false otherwise
 	friend bool operator!=(const Rational& R1, const Rational& R2)
 	{
 		int s1, s2;
-		scaleComDeno(R1, R2, s1, s2);
+		objectCommonDenominator(R1, R2, s1, s2);
 
 		if (s1 == s2) return false;
 		else        return true;
 	}
 
+	// Greater-than operator
+   // Precondition: R1 and R2 are valid Rational objects
+   // Postcondition: returns true if R1 > R2, false otherwise
 	friend bool operator>(const Rational& R1, const Rational& R2)
 	{
 		int s1, s2;
-		scaleComDeno(R1, R2, s1, s2);
+		objectCommonDenominator(R1, R2, s1, s2);
 
 		if (s1 > s2) return true;
 		else       return false;
 	}
 
+	// Less-than-or-equal operator
+	// Precondition: R1 and R2 are valid Rational objects
+	// Postcondition: returns true if R1 <= R2, false otherwise
 	friend bool operator<=(const Rational& R1, const Rational& R2)
 	{
 		int s1, s2;
-		scaleComDeno(R1, R2, s1, s2);
+		objectCommonDenominator(R1, R2, s1, s2);
 
 		if (s1 > s2) return false; // a > b
 		else       return true;  // a <= b
 	}
 
-	friend bool operator>=(const Rational& R1, const Rational&R2)
+	// Greater-than-or-equal operator
+   // Precondition: R1 and R2 are valid Rational objects
+   // Postcondition: returns true if R1 >= R2, false otherwise
+	friend bool operator>=(const Rational& R1, const Rational& R2)
 	{
 		int s1, s2;
-		scaleComDeno(R1, R2, s1, s2);
+		objectCommonDenominator(R1, R2, s1, s2);
 
 		if (s1 < s2) return false; // a < b
 		else       return true;  // a >= b
 	}
-
 
 };
 
@@ -328,17 +339,17 @@ public:
 //postCondition: returns the result of the multiplication of the two objects.
 Rational operator * (const Rational& R1, const Rational& R2)
 {
+
 	Rational temp;
-	if (R1.getDenominator() == 0 || R2.getDenominator() == 0)
+	/*if (R1.getDenominator() == 0 || R2.getDenominator() == 0)
 	{
 		temp.setNumerator(0);
-		temp.setDenominator(0);   // undefined
+		temp.setDenominator(0);
 	}
-	else
-	{
-		temp.setNumerator(R1.getNumerator() * R2.getNumerator());
-		temp.setDenominator(R1.getDenominator() * R2.getDenominator());
-	}
+	*/
+	temp.setNumerator(R1.getNumerator() * R2.getNumerator());
+	temp.setDenominator(R1.getDenominator() * R2.getDenominator());
+
 	return temp;
 }
 
@@ -347,16 +358,16 @@ Rational operator * (const Rational& R1, const Rational& R2)
 Rational operator / (const Rational& R1, const Rational& R2)
 {
 	Rational temp;
-	if (R1.getDenominator() == 0 || R2.getDenominator() == 0)
-	{
-		temp.setNumerator(0);
-		temp.setDenominator(0); // undefined
-	}
-	else
-	{
-		temp.setNumerator(R1.getNumerator() * R2.getDenominator());
-		temp.setDenominator(R1.getDenominator() * R2.getNumerator());
-	}
+	//if (R1.getDenominator() == 0 || R2.getDenominator() == 0)
+	//{
+	//	temp.setNumerator(0);
+	//	temp.setDenominator(0); // undefined
+	//}
+
+
+	temp.setNumerator(R1.getNumerator() * R2.getDenominator());
+	temp.setDenominator(R1.getDenominator() * R2.getNumerator());
+
 	return temp;
 }
 
@@ -364,22 +375,22 @@ Rational operator / (const Rational& R1, const Rational& R2)
 //postCondition: returns the result of the summation of the two objects.
 Rational operator + (const Rational& R1, const Rational& R2)
 {
+
 	Rational temp;
-	// If there is a 0 pattern -> the result is undefined
-	if (R1.getDenominator() == 0 || R2.getDenominator() == 0)
-	{
-		temp.setNumerator(0);
-		temp.setDenominator(0);
-	}
-	else
-	{
-		int a = R1.getNumerator();
-		int b = R1.getDenominator();
-		int c = R2.getNumerator();
-		int d = R2.getDenominator();
-		temp.setNumerator(a * d + c * b);
-		temp.setDenominator(b * d);
-	}
+	//// If there is a 0 pattern -> the result is undefined
+	//if (R1.getDenominator() == 0 || R2.getDenominator() == 0)
+	//{
+	//	temp.setNumerator(0);
+	//	temp.setDenominator(0);
+	//}
+
+	int a = R1.getNumerator();
+	int b = R1.getDenominator();
+	int c = R2.getNumerator();
+	int d = R2.getDenominator();
+	temp.setNumerator(a * d + c * b);
+	temp.setDenominator(b * d);
+
 	return temp;
 }
 
@@ -388,19 +399,18 @@ Rational operator + (const Rational& R1, const Rational& R2)
 Rational operator - (const Rational& R1, const Rational& R2)
 {
 	Rational temp;
-	if (R1.getDenominator() == 0 || R2.getDenominator() == 0)
+	/*if (R1.getDenominator() == 0 || R2.getDenominator() == 0)
 	{
 		temp.setNumerator(0);
 		temp.setDenominator(0);
-	}
-	else
-	{
-		int a = R1.getNumerator();
-		int b = R1.getDenominator();
-		int c = R2.getNumerator();
-		int d = R2.getDenominator();
-		temp.setNumerator(a * d - c * b);
-		temp.setDenominator(b * d);
-	}
+	}*/
+
+	int a = R1.getNumerator();
+	int b = R1.getDenominator();
+	int c = R2.getNumerator();
+	int d = R2.getDenominator();
+	temp.setNumerator(a * d - c * b);
+	temp.setDenominator(b * d);
+
 	return temp;
 }
